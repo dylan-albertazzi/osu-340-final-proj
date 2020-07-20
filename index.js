@@ -6,7 +6,7 @@ var exphbs = require("express-handlebars");
 
 var app = express();
 
-app.use(express.json());
+// app.use(express.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
@@ -45,15 +45,15 @@ app.listen(process.env.PORT || 3000, function () {
   console.log("== Server listening on port 3000");
 });
 
-app.get('/customers',function(req,res){
-  res.render('customers')
+app.get("/customers", function (req, res) {
+  res.render("customers");
 });
-app.get('/orders',function(req,res){
-  res.render('orders')
+app.get("/orders", function (req, res) {
+  res.render("orders");
 });
-app.get('/products',function(req,res){
-  res.render('products')
+app.get("/products", function (req, res) {
+  res.render("products");
 });
-app.get('/branches',function(req,res){
-  res.render('branches')
+app.get("/branches", function (req, res) {
+  res.render("branches");
 });
