@@ -41,8 +41,8 @@ app.get("*", function (req, res) {
   res.status(404).render("404");
 });
 
-app.listen(process.env.PORT || 3000, function () {
-  console.log("== Server listening on port 3000");
+app.listen(process.env.PORT || 2087, function () {
+  console.log("== Server listening on port 2087");
 });
 
 app.get("/customers", function (req, res) {
