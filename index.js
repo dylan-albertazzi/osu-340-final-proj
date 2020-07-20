@@ -24,6 +24,18 @@ app.post("/", (req, res, next) => {
   res.render("base");
 });
 
+app.get("/about", (req, res) => {
+  res.status(200).render("about");
+});
+
+app.get("/branches", (req, res) => {
+  res.status(200).render("branches");
+});
+
+app.get("/customers", (req, res) => {
+  res.status(200).render("customers");
+});
+
 //404 handler
 app.get("*", function (req, res) {
   res.status(404).render("404");
