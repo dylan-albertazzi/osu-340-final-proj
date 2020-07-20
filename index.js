@@ -32,3 +32,16 @@ app.get("*", function (req, res) {
 app.listen(process.env.PORT || 3000, function () {
   console.log("== Server listening on port 3000");
 });
+
+app.get('/customers',function(req,res){
+  res.render('customers')
+});
+app.get('/orders',function(req,res){
+  res.render('orders')
+});
+app.get('/products',function(req,res){
+  res.render('products')
+});
+app.get('/branches',function(req,res){
+  res.render('branches')
+});
