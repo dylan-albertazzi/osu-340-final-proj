@@ -35,3 +35,12 @@ th {
 tr:nth-child(even) {
   background-color: #dddddd;
 }
+
+.home-welcome {
+  background-color: white;
+  height: 50vh;
+  background-image: url("/media/images/wave.svg");
+  background-repeat: no-repeat;
+  background-size: auto;
+  background-position: bottom;
+}
