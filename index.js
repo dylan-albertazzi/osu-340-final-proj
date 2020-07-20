@@ -35,7 +35,12 @@ app.get("/branches", (req, res) => {
 app.get("/customers", (req, res) => {
   res.status(200).render("customers");
 });
-
+app.get("/orders", function (req, res) {
+  res.render("orders");
+});
+app.get("/products", function (req, res) {
+  res.render("products");
+});
 //404 handler
 app.get("*", function (req, res) {
   res.status(404).render("404");
@@ -43,17 +48,4 @@ app.get("*", function (req, res) {
 
 app.listen(process.env.PORT || 2087, function () {
   console.log("== Server listening on port 2087");
-});
-
-app.get("/customers", function (req, res) {
-  res.render("customers");
-});
-app.get("/orders", function (req, res) {
-  res.render("orders");
-});
-app.get("/products", function (req, res) {
-  res.render("products");
-});
-app.get("/branches", function (req, res) {
-  res.render("branches");
 });
