@@ -9,7 +9,7 @@
   <div class="row">
     <div class="col text-right pb-3">
       <a class="btn btn-outline-dark" href="#" role="button">Sort by Date</a>
-      <a class="btn btn-outline-dark ml-2" href="#" role="button">Sort by Price</a>
+      <a class="btn btn-outline-dark ml-2" href="#" role="button">Filter by Price</a>
       <a class="btn btn-primary ml-5" href="#" data-toggle="modal" data-target="#exampleModalCenter" role="button">+
         New</a>
     </div>
@@ -19,6 +19,7 @@
     Launch demo modal
   </button> --}}
 
+  {{!-- Calculate total price off the sum of the orders prices --}}
 
   <div class="row">
     <div class="col">
@@ -29,6 +30,7 @@
           <th>Products</th>
           <th>Customer</th>
           <th>Branch</th>
+          <th>Edit</th>
           <th>Del.</th>
         </tr>
         <tr>
@@ -37,7 +39,8 @@
           <td>2</td>
           <td>Spongebob</td>
           <td>Portland, OR</td>
-          <td>🗑</td>
+          <td class="text-center">✏️</td>
+          <td class="text-center">🗑</td>
         </tr>
         <tr>
           <td>2020-01-01</td>
@@ -45,7 +48,8 @@
           <td>5</td>
           <td>Barack Obama</td>
           <td>SanFrancisco, CA</td>
-          <td>🗑</td>
+          <td class="text-center">✏️</td>
+          <td class="text-center">🗑</td>
         </tr>
       </table>
     </div>
@@ -68,11 +72,49 @@
         <div class="modal-body">
 
           <div class="form-group">
-            <label for="branchLocation">Date</label>
-            <input type="text" class="form-control" id="branchLocation" aria-describedby="locationHelp"
-              placeholder="Enter location">
-            <small id="emailHelp" class="form-text text-muted">Ex. "2020-07-20" (YYYY-MM-DD)</small>
+            <label for="purchaseDate">Date</label>
+            <input type="date" class="form-control" id="purchaseDate" aria-describedby="purchaseDate"
+              placeholder="Enter date">
+            {{!-- <small id="dateHelp" class="form-text text-muted">Ex. "2020-07-20" (YYYY-MM-DD)</small> --}}
           </div>
+
+          <div class="form-group">
+            <label for="productBranch">Branch</label>
+            <br />
+            <select id="productBranch" name="productBranch">
+              <option value="volvo">Insert</option>
+              <option value="saab">Dynamic</option>
+              <option value="fiat">Functionality with JS</option>
+            </select>
+            <small id="selectProductHelp" class="form-text text-muted">Branch the order is placed at. This determines
+              available products.</small>
+          </div>
+
+          {{!-- Filter products ordered by the branch selected --}}
+          <div class="form-group">
+            <label for="productsOrdered">Products Ordered</label>
+            <br />
+            <select id="productsOrdered" name="productsOrdered" multiple>
+              <option value="volvo">Insert</option>
+              <option value="saab">Dynamic</option>
+              <option value="fiat">Functionality with JS</option>
+            </select>
+            <small id="selectProductHelp" class="form-text text-muted">Hold down the Ctrl (windows) / Command (Mac)
+              button to select multiple options.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="customer">Customer</label>
+            <br />
+            <select id="customer" name="customer">
+              <option value="volvo">Insert</option>
+              <option value="saab">Dynamic</option>
+              <option value="fiat">Functionality with JS</option>
+            </select>
+
+          </div>
+
+
 
         </div>
         <div class="modal-footer">

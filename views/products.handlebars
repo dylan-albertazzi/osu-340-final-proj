@@ -27,25 +27,29 @@
           <th>Name</th>
           <th>Branch</th>
           <th>Price</th>
+          <th>Edit</th>
           <th>Del.</th>
         </tr>
         <tr>
           <td>Speedy Boat</td>
           <td>Portland, OR</td>
           <td>$ 58,671</td>
-          <td>🗑</td>
+          <td class="text-center">✏️</td>
+          <td class="text-center">🗑</td>
         </tr>
         <tr>
           <td>Super Boat</td>
           <td>Portland, OR</td>
           <td>$ 92,103</td>
-          <td>🗑</td>
+          <td class="text-center">✏️</td>
+          <td class="text-center">🗑</td>
         </tr>
         <tr>
           <td>Luxury Boat</td>
           <td>SanFrancisco, CA</td>
           <td>$ 182,449</td>
-          <td>🗑</td>
+          <td class="text-center">✏️</td>
+          <td class="text-center">🗑</td>
         </tr>
       </table>
     </div>
@@ -68,10 +72,31 @@
         <div class="modal-body">
 
           <div class="form-group">
-            <label for="branchLocation">Name</label>
-            <input type="text" class="form-control" id="branchLocation" aria-describedby="locationHelp"
-              placeholder="Enter location">
+            <label for="productName">Name</label>
+            <input type="text" class="form-control" id="productName" aria-describedby="nameHelp"
+              placeholder="Enter product name">
             <small id="emailHelp" class="form-text text-muted">Ex. "Big Boat" or "Fun Boat"</small>
+          </div>
+
+
+          <div class="form-group">
+            <label for="productPrice">Price</label>
+            <input type="number" class="form-control" id="productPrice" aria-describedby="priceHelp"
+              placeholder="Enter product price">
+            <small id="priceHelp" class="form-text text-muted">Ex. 45,000</small>
+          </div>
+
+
+          <div class="form-group">
+            <label for="productBranch">Branch</label>
+            <br />
+            <select id="productBranch" name="productBranch" multiple>
+              <option value="volvo">Insert</option>
+              <option value="saab">Dynamic</option>
+              <option value="fiat">Functionality with JS</option>
+            </select>
+            <small id="selectProductHelp" class="form-text text-muted">Hold down the Ctrl (windows) / Command (Mac)
+              button to select multiple options.</small>
           </div>
 
         </div>
