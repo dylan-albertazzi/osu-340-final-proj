@@ -1,95 +1,77 @@
 -------------------------------------------------------------------------------
--- troopers page
+-- Isaac: orders and products
+
+
+-------------------------------------------------------------------------------
+-- orders page
 
 SELECT *
-  FROM troopers;
+  FROM orders;
 
-INSERT INTO `troopers` (`id`, `garrison`, `loadout`) VALUES
- (:idInput, :garrisonInput, :loadoutInput);
-
-SELECT * 
-    FROM troopers
-    WHERE garrison = (garrisonForm);
-
--- Filter by trooper id
 SELECT *
-  FROM troopers;
+  FROM orders
+  ORDER BY purchase_date;
+
+SELECT *
+  FROM orders
+  WHERE total_price > 100000;
+  ORDER BY total_price;
+
+INSERT INTO orders (`customer_id`, `branch_id`, `total_price`, `purchase_date`) VALUES
+ (:customerIdInput, :branchIdInput, :priceInput, :dateInput);
+
+UPDATE orders
+SET total_price=:priceInput
 WHERE id=:idInput;
 
--- Change garrison Assignment: moving to another garrison radio button
-UPDATE troopers
-   SET garrison=:garrisonInput
- WHERE id=:idInput;
-
--- Change garrison Assignment: removing from current garrison radio button
-UPDATE troopers
-   SET garrison=NULL
- WHERE id=:idInput;
-
--- Deleting troopers (RIP)
-DELETE FROM `troopers` WHERE id=:idInput;
-
--------------------------------------------------------------------------------
--- garrisons page
-
-SELECT * 
-    FROM garrisons;
-
-INSERT INTO `garrisons` (`id`, `name`, `capacity`) VALUES
-(:idInput, :nameInput, :capacityInput);
-
--------------------------------------------------------------------------------
--- loadouts page
-SELECT * FROM loadouts;
-    INSERT INTO `loadouts` (`blaster`, `detonator`) VALUES
-    (:blasterInput, :detonatorInput);
-
-UPDATE loadouts 
-    SET blaster = :blasterInput, detonator = :detonatorInput
-    WHERE id = (:loadoutForm);
+DELETE FROM orders
+WHERE id=:idInput;
 
 
 -------------------------------------------------------------------------------
--- ships page
+-- products page
 
 SELECT *
-  FROM ships;
+  FROM products;
 
-INSERT INTO `ships` (`id`, `type`) VALUES
-(:idInput, :typeInput);
+SELECT *
+  FROM products
+  ORDER BY price;
+
+SELECT *
+  FROM orders
+  WHERE price > 50000;
+  ORDER BY price;
+
+INSERT INTO products (`name`, `branch_id`, `price`) VALUES
+ (:nameInput, :branchIdInput, :priceInput);
+
+UPDATE products
+SET price=:priceInput
+WHERE id=:idInput;
+
+DELETE FROM products
+WHERE id=:idInput;
+
+-------------------------------------------------------------------------------
+-- products_orders
+
+SELECT * FROM products_orders;
+
+-- Adding a relationship
+INSERT INTO products_orders (`product_id`, `order_id`) VALUES
+(:productIdInput, :orderIdInput);
+
+-- Removing a relationship
+DELETE FROM `products_orders` WHERE product_id=:productIdInput AND order_id=:orderIdInput;
 
 -------------------------------------------------------------------------------
 -- droids page
-SELECT * 
+SELECT *
     FROM droids;
 
 INSERT INTO `droids` (`type`) VALUES
     (:typeInput);
-
-
--------------------------------------------------------------------------------
--- manifests page
-
---------------------------------------------------
--- ships_troopers
-SELECT * FROM ships_troopers;
-
--- Adding a trooper to a ship
-INSERT INTO `ships_troopers` (`ship`, `trooper`) VALUES
-(:shipInput, :trooperInput);
-
--- Removing a trooper from a ship
-DELETE FROM `ships_troopers` WHERE ship=:shipInput AND trooper=:trooperInput;
-
---------------------------------------------------
--- ships_droids
-SELECT *
-    FROM ships;
-
-INSERT INTO `ships_droids` (`ship`, `droid`) VALUES
-    (:shipInput, :droidInput);
-
-DELETE FROM `ships_droids` WHERE ship = :shipInput OR :droidInput;
 
 
 
@@ -128,23 +110,23 @@ DELETE FROM `troopers` WHERE id=:idInput;
 -- Customers page
 
 SELECT customers.name, customers.email, customers.address, customers.city, customers.state, customers.zip_code, customers.age, SUM(orders.total_price) AS total_spent
-    FROM customers 
-    LEFT JOIN orders 
+    FROM customers
+    LEFT JOIN orders
     ON orders.customer_id = customers.id
     GROUP BY customers.id
 
 -- Sort by amount sp
 SELECT customers.name, customers.email, customers.address, customers.city, customers.state, customers.zip_code, customers.age, SUM(orders.total_price) AS total_spent
-    FROM customers 
-    LEFT JOIN orders 
+    FROM customers
+    LEFT JOIN orders
     ON orders.customer_id = customers.id
     GROUP BY customers.id
     ORDER BY total_spent DESC
 
 -- Sort by state
 SELECT customers.name, customers.email, customers.address, customers.city, customers.state, customers.zip_code, customers.age, SUM(orders.total_price) AS total_spent
-    FROM customers 
-    LEFT JOIN orders 
+    FROM customers
+    LEFT JOIN orders
     ON orders.customer_id = customers.id
     GROUP BY customers.id
     ORDER BY customers.state DESC
