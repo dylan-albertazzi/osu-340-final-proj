@@ -14,6 +14,7 @@ app.set("view engine", "handlebars");
 
 //serve static files
 app.use(express.static(__dirname + "/static"));
+app.use('/boats', require('./boats.js'));
 
 app.get("/", (req, res) => {
   res.status(200).render("base");
