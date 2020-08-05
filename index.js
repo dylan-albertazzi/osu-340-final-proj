@@ -3,6 +3,7 @@
 var bodyParser = require("body-parser");
 var express = require("express");
 var exphbs = require("express-handlebars");
+var mysql = require("./dbcon.js");
 
 var app = express();
 
@@ -11,10 +12,16 @@ var app = express();
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
-
+app.set("mysql", mysql);
+console.log("my sql set");
 //serve static files
 app.use(express.static(__dirname + "/static"));
-app.use('/boats', require('./boats.js'));
+app.use("/branches", require("./branches.js"));
+
+// for parsing application/json
+app.use(bodyParser.json());
+// for parsing application/xwww-
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
   res.status(200).render("base");

@@ -8,8 +8,8 @@
 
   <div class="row">
     <div class="col text-right pb-3">
-      <a class="btn btn-outline-dark" href="#" role="button">Sort by Sales</a>
-      <a class="btn btn-outline-dark ml-2" href="#" role="button">Sort by Location</a>
+      <a class="btn btn-outline-dark" href="/branches/bySales" role="button">Sort by Sales</a>
+      <a class="btn btn-outline-dark ml-2" href="/branches/byLocation" role="button">Sort by Location</a>
       <a class="btn btn-primary ml-5" href="#" data-toggle="modal" data-target="#exampleModalCenter" role="button">+
         New</a>
     </div>
@@ -32,31 +32,27 @@
           <th>Edit</th>
           <th>Del.</th>
         </tr>
+
+        {{#each branches}}
         <tr>
-          <td>Portland, OR</td>
-          <td>$ 1,750,322</td>
-          <td>50</td>
-          <td>325</td>
-          <td>232</td>
-          <td class="text-center">✏️</td>
-          <td class="text-center">🗑</td>
+          <td>{{name}}</td>
+          <td>{{tot_sales}}</td>
+          <td>{{tot_products}}</td>
+          <td>{{tot_orders}}</td>
+          <td>{{tot_customers}}</td>
+          <td class="text-center"><a href="/branches/{{id}}">✏️</a></td>
+          <td class="text-center"><button class="bg-transparent border-0" onclick="deleteBranch({{id}})">🗑</button>
+          </td>
+
         </tr>
-        <tr>
-          <td>SanFrancisco, CA</td>
-          <td>$ 4,750,567</td>
-          <td>55</td>
-          <td>1232</td>
-          <td>807</td>
-          <td class="text-center">✏️</td>
-          <td class="text-center">🗑</td>
-        </tr>
+        {{/each}}
       </table>
     </div>
   </div>
 
 </div>
 
-<!-- Modal -->
+<!--Add Branch Modal -->
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
   aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -67,22 +63,26 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form>
+      <form id="addbranch" method="post">
         <div class="modal-body">
 
           <div class="form-group">
             <label for="branchLocation">Location</label>
-            <input type="text" class="form-control" id="branchLocation" aria-describedby="locationHelp"
-              placeholder="Enter location">
+            <input type="text" name="branchLocation" class="form-control" id="branchLocation"
+              aria-describedby="locationHelp" placeholder="Enter location">
             <small id="emailHelp" class="form-text text-muted">Ex. "Portland, OR" or "Seattle, WA"</small>
           </div>
 
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Submit</button>
+          {{!-- <input type="submit" value="submit"> --}}
+          <button class="btn btn-primary">Submit</button>
+          </input>
         </div>
       </form>
     </div>
   </div>
 </div>
+
+<script type="text/javascript" src="/deletebranch.js" defer></script>
