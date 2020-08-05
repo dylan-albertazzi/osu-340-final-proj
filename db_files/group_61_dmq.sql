@@ -66,12 +66,7 @@ INSERT INTO products_orders (`product_id`, `order_id`) VALUES
 DELETE FROM `products_orders` WHERE product_id=:productIdInput AND order_id=:orderIdInput;
 
 -------------------------------------------------------------------------------
--- droids page
-SELECT *
-    FROM droids;
 
-INSERT INTO `droids` (`type`) VALUES
-    (:typeInput);
 
 
 
@@ -81,66 +76,76 @@ INSERT INTO `droids` (`type`) VALUES
 -----------------------------------------------
 -- Branches page
 
-SELECT *
-  FROM branches;
+SELECT branches.id, branches.name, COALESCE(SUM(orders.total_price), 0) AS tot_sales, COUNT(products.id) AS tot_products, COUNT(orders.id) AS tot_orders, COUNT(customers.id) AS tot_customers
+    FROM branches 
+    LEFT JOIN orders
+    ON orders.branch_id = branches.id
+    
+    LEFT JOIN branch_customer
+    ON branches.id = branch_customer.branch_id
+    LEFT JOIN customers
+    ON branch_customer.customer_id = customers.id
+    LEFT JOIN products
+    ON products.branch_id = branches.id
+    GROUP BY branches.id
 
 -- Sort by total sales
-SELECT *
-  FROM branches
-  ORDER BY total_sales DESC;
-
+SELECT branches.id, branches.name, COALESCE(SUM(orders.total_price), 0) AS tot_sales, COUNT(products.id) AS tot_products, COUNT(orders.id) AS tot_orders, COUNT(customers.id) AS tot_customers
+    FROM branches 
+    LEFT JOIN orders
+    ON orders.branch_id = branches.id
+    
+    LEFT JOIN branch_customer
+    ON branches.id = branch_customer.branch_id
+    LEFT JOIN customers
+    ON branch_customer.customer_id = customers.id
+    LEFT JOIN products
+    ON products.branch_id = branches.id
+    GROUP BY branches.id
+    ORDER BY tot_sales DESC
 -- Sort by location
-SELECT *
-  FROM branches
-  ORDER BY name DESC;
+SELECT branches.id, branches.name, COALESCE(SUM(orders.total_price), 0) AS tot_sales, COUNT(products.id) AS tot_products, COUNT(orders.id) AS tot_orders, COUNT(customers.id) AS tot_customers
+    FROM branches 
+    LEFT JOIN orders
+    ON orders.branch_id = branches.id
+    
+    LEFT JOIN branch_customer
+    ON branches.id = branch_customer.branch_id
+    LEFT JOIN customers
+    ON branch_customer.customer_id = customers.id
+    LEFT JOIN products
+    ON products.branch_id = branches.id
+    GROUP BY branches.id
+    ORDER BY branches.name ASC
 
 -- Update a branch
-UPDATE branches
-   SET `name`=:nameInput, `total_sales`=:totSalesInput
- WHERE id=:idInput;
+UPDATE branches SET name=? WHERE id=?
 
 -- Insert new branch
-INSERT INTO branches (`name`, `total_sales`) VALUES
-(:nameInput, 0);
+INSERT INTO branches (name) VALUES (?)
 
 -- Deleting a branch
-DELETE FROM `troopers` WHERE id=:idInput;
+DELETE FROM branches WHERE id = ?
 
 -----------------------------------------------
 -- Customers page
 
-SELECT customers.name, customers.email, customers.address, customers.city, customers.state, customers.zip_code, customers.age, SUM(orders.total_price) AS total_spent
+SELECT customers.id, customers.name, customers.email, customers.city, customers.state, customers.age
     FROM customers
-    LEFT JOIN orders
-    ON orders.customer_id = customers.id
-    GROUP BY customers.id
 
--- Sort by amount sp
-SELECT customers.name, customers.email, customers.address, customers.city, customers.state, customers.zip_code, customers.age, SUM(orders.total_price) AS total_spent
-    FROM customers
-    LEFT JOIN orders
-    ON orders.customer_id = customers.id
-    GROUP BY customers.id
-    ORDER BY total_spent DESC
 
 -- Sort by state
-SELECT customers.name, customers.email, customers.address, customers.city, customers.state, customers.zip_code, customers.age, SUM(orders.total_price) AS total_spent
-    FROM customers
-    LEFT JOIN orders
-    ON orders.customer_id = customers.id
-    GROUP BY customers.id
-    ORDER BY customers.state DESC
+SELECT id, name, email, address, city, state, zip_code, age 
+        FROM customers
+        ORDER BY state ASC
 
--- Update a branch
-UPDATE customers
-   SET `name`=:nameInput, `email`=:emailInput, `address`=:addressInput, `city`=:cityInput, `state`=:stateInput, `zip_code`=:zipInput, `age`=:ageInput
- WHERE id=:idInput;
+-- Update customers
+UPDATE customers SET name=?, email=?, address=?, city=?, state=?, zip_code=?, age=? WHERE id=?
 
--- Insert new branch
-INSERT INTO customers (`name`, `email`, `address`, `city`, `state`, `zip_code`, `age`) VALUES
-(:nameInput, :emailInput, :addressInput, :cityInput, :stateInput, :zipInput, :ageInput);
+-- Insert new customer
+INSERT INTO customers (name, email, city, state, zip_code, age) VALUES (?,?,?,?,?,?)
 
--- Deleting a branch
+-- Deleting a customer
 DELETE FROM customers WHERE id=:idInput;
 
 
@@ -149,9 +154,9 @@ DELETE FROM customers WHERE id=:idInput;
 -- branch_customer
 SELECT * FROM branch_customer;
 
--- Adding a trooper to a ship
+-- 
 INSERT INTO `branch_customer` (`branch_id`, `customer_id`) VALUES
 (:branchIdInput, :customerIdInput);
 
--- Removing a trooper from a ship
+--
 DELETE FROM `branch_customer` WHERE branch_id=:branchIdInput AND customer_id=:customerIdInput;

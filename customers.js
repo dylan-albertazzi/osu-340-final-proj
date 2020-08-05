@@ -29,35 +29,7 @@ module.exports = (function () {
     console.log("=Context in func:", context);
   }
 
-  function getBranchesBySales(res, mysql, context, complete) {
-    mysql.pool.query(
-      `SELECT branches.id, branches.name, COALESCE(SUM(orders.total_price), 0) AS tot_sales, COUNT(products.id) AS tot_products, COUNT(orders.id) AS tot_orders, COUNT(customers.id) AS tot_customers
-            FROM branches 
-            LEFT JOIN orders
-            ON orders.branch_id = branches.id
-            
-            LEFT JOIN branch_customer
-            ON branches.id = branch_customer.branch_id
-            LEFT JOIN customers
-            ON branch_customer.customer_id = customers.id
-            LEFT JOIN products
-            ON products.branch_id = branches.id
-            GROUP BY branches.id
-            ORDER BY tot_sales DESC`,
-      function (error, results, fields) {
-        if (error) {
-          res.write(JSON.stringify(error));
-          res.end();
-        }
-
-        context.branches = results;
-
-        complete();
-      }
-    );
-    console.log("=Context in func:", context);
-  }
-
+  
   function getCustomersByState(res, mysql, context, complete) {
     mysql.pool.query(
       `SELECT id, name, email, address, city, state, zip_code, age 
@@ -125,23 +97,6 @@ module.exports = (function () {
     }
   });
 
-  /*Display Branches by total sales*/
-
-  router.get("/bySales", function (req, res) {
-    var callbackCount = 0;
-    var context = {};
-    var mysql = req.app.get("mysql");
-
-    getBranchesBySales(res, mysql, context, complete);
-
-    function complete() {
-      callbackCount++;
-      if (callbackCount >= 1) {
-        console.log("res.render context:", context);
-        res.render("branches", context);
-      }
-    }
-  });
 
   /*Display customers by state*/
 
