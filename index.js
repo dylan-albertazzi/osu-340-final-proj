@@ -17,7 +17,7 @@ console.log("my sql set");
 //serve static files
 app.use(express.static(__dirname + "/static"));
 app.use("/branches", require("./branches.js"));
-
+app.use("/customers", require("./customers.js"));
 // for parsing application/json
 app.use(bodyParser.json());
 // for parsing application/xwww-

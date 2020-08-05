@@ -8,8 +8,7 @@
 
     <div class="row">
         <div class="col text-right pb-3">
-            <a class="btn btn-outline-dark" href="#" role="button">Sort by Amount Spent</a>
-            <a class="btn btn-outline-dark ml-2" href="#" role="button">Sort by State</a>
+            <a class="btn btn-outline-dark ml-2" href="/customers/byState" role="button">Sort by State</a>
             <a class="btn btn-primary ml-5" href="#" data-toggle="modal" data-target="#exampleModalCenter"
                 role="button">+
                 New</a>
@@ -33,24 +32,20 @@
                     <th>Edit</th>
                     <th>Del.</th>
                 </tr>
+                {{#each customers}}
                 <tr>
-                    <td>Bob Jefferson</td>
-                    <td>bj@gmail.com</td>
-                    <td>Portland, OR</td>
-                    <td>46</td>
-                    <td>more info</td>
-                    <td class="text-center">✏️</td>
-                    <td class="text-center">🗑</td>
+                    <td>{{name}}</td>
+                    <td>{{email}}</td>
+                    <td>{{city}}, {{state}}</td>
+                    <td>{{age}}</td>
+                    <td class="text-center"><a href="/customers/customer/{{id}}">💵</a></td>
+                    <td class="text-center"><a href="/customers/{{id}}">✏️</a></td>
+                    <td class="text-center"><button class="bg-transparent border-0"
+                            onclick="deleteCustomer({{id}})">🗑</button>
+                    </td>
+
                 </tr>
-                <tr>
-                    <td>Tammy Smith</td>
-                    <td>tammys@gmail.com</td>
-                    <td>New York, NY</td>
-                    <td>37</td>
-                    <td>more info</td>
-                    <td class="text-center">✏️</td>
-                    <td class="text-center">🗑</td>
-                </tr>
+                {{/each}}
             </table>
         </div>
     </div>
@@ -68,33 +63,37 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form>
+            <form id="addcustomer" method="post">
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="customerName">Name</label>
-                        <input type="text" class="form-control" id="customerName" aria-describedby="customerNameHelp">
+                        <input type="text" class="form-control" name="customerName" id="customerName"
+                            aria-describedby="customerNameHelp">
                         <small id="customerNameHelp" class="form-text text-muted">Ex. Tyler Smith</small>
                     </div>
                     <div class="form-group">
                         <label for="customerEmail">Email</label>
-                        <input type="email" class="form-control" id="customerEmail"
+                        <input type="email" class="form-control" name="customerEmail" id="customerEmail"
                             aria-describedby="customerEmailHelp">
                         <small id="customerEmailHelp" class="form-text text-muted">Ex. tyler@gmail.com</small>
                     </div>
                     <div class="form-group">
                         <label for="customerAddress">Address</label>
-                        <input type="text" class="form-control" id="customerAddress" aria-describedby="addressHelp">
+                        <input type="text" class="form-control" name="customerAddress" id="customerAddress"
+                            aria-describedby="addressHelp">
                         <small id="addressHelp" class="form-text text-muted">Ex. "61032 Walnut St."</small>
                     </div>
                     <div class="form-group">
                         <label for="customerCity">City</label>
-                        <input type="text" class="form-control" id="customerCity" aria-describedby="cityHelp">
+                        <input type="text" class="form-control" name="customerCity" id="customerCity"
+                            aria-describedby="cityHelp">
                         <small id="cityHelp" class="form-text text-muted">Ex. "Los Angeles"</small>
                     </div>
                     <div class="form-group">
                         <label for="customerCity">State</label>
 
-                        <select class="form-control" id="customerState" aria-describedby="stateHelp">
+                        <select class="form-control" name="customerState" id="customerState"
+                            aria-describedby="stateHelp">
                             <option value="AL">Alabama</option>
                             <option value="AK">Alaska</option>
                             <option value="AZ">Arizona</option>
@@ -150,12 +149,14 @@
                     </div>
                     <div class="form-group">
                         <label for="customerZip">Zip Code</label>
-                        <input type="number" class="form-control" id="customerZip" aria-describedby="zipHelp">
+                        <input type="number" class="form-control" name="customerZip" id="customerZip"
+                            aria-describedby="zipHelp">
                         <small id="zipHelp" class="form-text text-muted">Ex. "90001"</small>
                     </div>
                     <div class="form-group">
                         <label for="customerAge">Age</label>
-                        <input type="number" class="form-control" id="customerAge" aria-describedby="ageHelp">
+                        <input type="number" class="form-control" name="customerAge" id="customerAge"
+                            aria-describedby="ageHelp">
                         <small id="ageHelp" class="form-text text-muted">Ex. 46</small>
                     </div>
 
@@ -169,3 +170,5 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript" src="/deletecustomer.js" defer></script>

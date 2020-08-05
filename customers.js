@@ -11,27 +11,17 @@ module.exports = (function () {
     })
   );
 
-  function getBranches(res, mysql, context, complete) {
+  function getCustomers(res, mysql, context, complete) {
     mysql.pool.query(
-      `SELECT branches.id, branches.name, COALESCE(SUM(orders.total_price), 0) AS tot_sales, COUNT(products.id) AS tot_products, COUNT(orders.id) AS tot_orders, COUNT(customers.id) AS tot_customers
-            FROM branches 
-            LEFT JOIN orders
-            ON orders.branch_id = branches.id
-            
-            LEFT JOIN branch_customer
-            ON branches.id = branch_customer.branch_id
-            LEFT JOIN customers
-            ON branch_customer.customer_id = customers.id
-            LEFT JOIN products
-            ON products.branch_id = branches.id
-            GROUP BY branches.id`,
+      `SELECT customers.id, customers.name, customers.email, customers.city, customers.state, customers.age
+        FROM customers`,
       function (error, results, fields) {
         if (error) {
           res.write(JSON.stringify(error));
           res.end();
         }
 
-        context.branches = results;
+        context.customers = results;
 
         complete();
       }
@@ -68,28 +58,18 @@ module.exports = (function () {
     console.log("=Context in func:", context);
   }
 
-  function getBranchesByLocation(res, mysql, context, complete) {
+  function getCustomersByState(res, mysql, context, complete) {
     mysql.pool.query(
-      `SELECT branches.id, branches.name, COALESCE(SUM(orders.total_price), 0) AS tot_sales, COUNT(products.id) AS tot_products, COUNT(orders.id) AS tot_orders, COUNT(customers.id) AS tot_customers
-            FROM branches 
-            LEFT JOIN orders
-            ON orders.branch_id = branches.id
-            
-            LEFT JOIN branch_customer
-            ON branches.id = branch_customer.branch_id
-            LEFT JOIN customers
-            ON branch_customer.customer_id = customers.id
-            LEFT JOIN products
-            ON products.branch_id = branches.id
-            GROUP BY branches.id
-            ORDER BY branches.name ASC`,
+      `SELECT id, name, email, address, city, state, zip_code, age 
+        FROM customers
+        ORDER BY state ASC`,
       function (error, results, fields) {
         if (error) {
           res.write(JSON.stringify(error));
           res.end();
         }
 
-        context.branches = results;
+        context.customers = results;
 
         complete();
       }
@@ -97,15 +77,32 @@ module.exports = (function () {
     console.log("=Context in func:", context);
   }
 
-  function getBranch(res, mysql, context, id, complete) {
-    var sql = "SELECT id, name FROM branches WHERE branches.id = ?";
+  function getCustomer(res, mysql, context, id, complete) {
+    var sql =
+      "SELECT id, name, email, address, city, state, zip_code, age FROM customers WHERE customers.id = ?";
     var inserts = [id];
     mysql.pool.query(sql, inserts, function (error, results, fields) {
       if (error) {
         res.write(JSON.stringify(error));
         res.end();
       }
-      context.branch = results[0];
+      context.customer = results[0];
+      complete();
+    });
+  }
+
+  function getCustomerOrders(res, mysql, context, id, complete) {
+    var sql = `SELECT orders.total_price, branches.name, orders.purchase_date  FROM orders 
+      INNER JOIN branches
+      ON orders.branch_id = branches.id
+      WHERE orders.customer_id = ?`;
+    var inserts = [id];
+    mysql.pool.query(sql, inserts, function (error, results, fields) {
+      if (error) {
+        res.write(JSON.stringify(error));
+        res.end();
+      }
+      context.orders = results;
       complete();
     });
   }
@@ -117,13 +114,13 @@ module.exports = (function () {
     var context = {};
     var mysql = req.app.get("mysql");
 
-    getBranches(res, mysql, context, complete);
+    getCustomers(res, mysql, context, complete);
 
     function complete() {
       callbackCount++;
       if (callbackCount >= 1) {
         console.log("res.render context:", context);
-        res.render("branches", context);
+        res.render("customers", context);
       }
     }
   });
@@ -146,50 +143,76 @@ module.exports = (function () {
     }
   });
 
-  /*Display Branches by location*/
+  /*Display customers by state*/
 
-  router.get("/byLocation", function (req, res) {
+  router.get("/byState", function (req, res) {
     var callbackCount = 0;
     var context = {};
     var mysql = req.app.get("mysql");
 
-    getBranchesByLocation(res, mysql, context, complete);
+    getCustomersByState(res, mysql, context, complete);
 
     function complete() {
       callbackCount++;
       if (callbackCount >= 1) {
         console.log("res.render context:", context);
-        res.render("branches", context);
+        res.render("customers", context);
       }
     }
   });
 
-  /* Display one branch for the specific purpose of updating branches */
+  /* Display one customer for the specific purpose of updating customers */
 
   router.get("/:id", function (req, res) {
     callbackCount = 0;
     var context = {};
-    context.jsscripts = ["updatebranch.js"];
+    context.jsscripts = ["updatecustomer.js"];
     var mysql = req.app.get("mysql");
 
-    getBranch(res, mysql, context, req.params.id, complete);
+    getCustomer(res, mysql, context, req.params.id, complete);
 
     function complete() {
       callbackCount++;
       if (callbackCount >= 1) {
         console.log("context:", context);
-        res.render("update-branches", context);
+        res.render("update-customer", context);
       }
     }
   });
 
-  /* Adds a branch, redirects to the branches page after adding */
+  /* Display one customers orders */
+
+  router.get("/customer/:id", function (req, res) {
+    callbackCount = 0;
+    var context = {};
+    var mysql = req.app.get("mysql");
+
+    getCustomerOrders(res, mysql, context, req.params.id, complete);
+
+    function complete() {
+      callbackCount++;
+      if (callbackCount >= 1) {
+        console.log("context for single customer:", context);
+        res.render("orders-customers", context);
+      }
+    }
+  });
+
+  /* Adds a customer, redirects to the customers page after adding */
 
   router.post("/", function (req, res) {
-    console.log(req.body.branchLocation);
+    console.log("in post:", req.body);
     var mysql = req.app.get("mysql");
-    var sql = "INSERT INTO branches (name) VALUES (?)";
-    var inserts = [req.body.branchLocation];
+    var sql =
+      "INSERT INTO customers (name, email, city, state, zip_code, age) VALUES (?,?,?,?,?,?)";
+    var inserts = [
+      req.body.customerName,
+      req.body.customerEmail,
+      req.body.customerCity,
+      req.body.customerState,
+      req.body.customerZip,
+      req.body.customerAge,
+    ];
 
     sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
       if (error) {
@@ -197,7 +220,7 @@ module.exports = (function () {
         res.write(JSON.stringify(error));
         res.end();
       } else {
-        res.redirect("/branches");
+        res.redirect("/customers");
       }
     });
   });
@@ -207,8 +230,18 @@ module.exports = (function () {
   router.put("/:id", function (req, res) {
     var mysql = req.app.get("mysql");
     console.log("in form put yay. Context:", req.body);
-    var sql = "UPDATE branches SET name=? WHERE id=?";
-    var inserts = [req.body.name, req.params.id];
+    var sql =
+      "UPDATE customers SET name=?, email=?, address=?, city=?, state=?, zip_code=?, age=? WHERE id=?";
+    var inserts = [
+      req.body.name,
+      req.body.email,
+      req.body.address,
+      req.body.city,
+      req.body.state,
+      req.body.zip_code,
+      req.body.age,
+      req.params.id,
+    ];
 
     sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
       if (error) {
@@ -222,11 +255,11 @@ module.exports = (function () {
     });
   });
 
-  /* Route to delete a branch, simply returns a 202 upon success. Ajax will handle this. */
+  /* Route to delete a customer, simply returns a 202 upon success. Ajax will handle this. */
 
   router.delete("/:id", function (req, res) {
     var mysql = req.app.get("mysql");
-    var sql = "DELETE FROM branches WHERE id = ?";
+    var sql = "DELETE FROM customers WHERE id = ?";
     var inserts = [req.params.id];
     sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
       if (error) {
