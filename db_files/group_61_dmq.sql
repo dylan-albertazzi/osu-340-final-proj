@@ -5,17 +5,42 @@
 -------------------------------------------------------------------------------
 -- orders page
 
-SELECT *
-  FROM orders;
+SELECT orders.id, orders.purchase_date, COALESCE(SUM(products.price), 0) AS total_price, customers.name AS customer, branch.location AS branch
+            FROM orders
+            LEFT JOIN customers
+            ON orders.customer_id = customers.id
 
-SELECT *
-  FROM orders
-  ORDER BY purchase_date;
+            LEFT JOIN branches
+            ON orders.branch_id = branches.id
 
-SELECT *
-  FROM orders
-  WHERE total_price > 100000;
-  ORDER BY total_price;
+            LEFT JOIN product_order
+            ON orders.id = product_order.order_id
+
+            GROUP BY orders.id;
+
+
+SELECT orders.id, orders.purchase_date, COALESCE(SUM(products.price), 0) AS total_price, customers.name AS customer, branch.location AS branch
+            FROM orders
+            LEFT JOIN customers
+            ON orders.customer_id = customers.id
+            LEFT JOIN branches
+            ON orders.branch_id = branches.id
+            LEFT JOIN product_order
+            ON orders.id = product_order.order_id
+            GROUP BY orders.id
+            ORDER BY total_price DESC;
+
+
+SELECT orders.id, orders.purchase_date, COALESCE(SUM(products.price), 0) AS total_price, customers.name AS customer, branch.location AS branch
+            FROM orders
+            LEFT JOIN customers
+            ON orders.customer_id = customers.id
+            LEFT JOIN branches
+            ON orders.branch_id = branches.id
+            LEFT JOIN product_order
+            ON orders.id = product_order.order_id
+            GROUP BY orders.id
+            ORDER BY branch ASC;
 
 INSERT INTO orders (`customer_id`, `branch_id`, `total_price`, `purchase_date`) VALUES
  (:customerIdInput, :branchIdInput, :priceInput, :dateInput);
@@ -31,27 +56,34 @@ WHERE id=:idInput;
 -------------------------------------------------------------------------------
 -- products page
 
-SELECT *
-  FROM products;
+SELECT products.id, products.name, branch.location AS branch, products.price
+            FROM products
+            LEFT JOIN branches
+            ON products.branch_id = branches.id
+            GROUP BY products.id;
 
-SELECT *
-  FROM products
-  ORDER BY price;
+SELECT products.id, products.name, branch.location AS branch, products.price
+            FROM products
+            LEFT JOIN branches
+            ON products.branch_id = branches.id
+            GROUP BY products.id
+            ORDER BY price DESC;
 
-SELECT *
-  FROM orders
-  WHERE price > 50000;
-  ORDER BY price;
+SELECT products.id, products.name, branch.location AS branch, products.price
+            FROM products
+            LEFT JOIN branches
+            ON products.branch_id = branches.id
+            GROUP BY products.id
+            ORDER BY branch ASC;
 
 INSERT INTO products (`name`, `branch_id`, `price`) VALUES
  (:nameInput, :branchIdInput, :priceInput);
 
-UPDATE products
-SET price=:priceInput
-WHERE id=:idInput;
+UPDATE products SET name=? WHERE id=?
 
-DELETE FROM products
-WHERE id=:idInput;
+INSERT INTO branches (name) VALUES (?)
+
+DELETE FROM branches WHERE id = ?
 
 -------------------------------------------------------------------------------
 -- products_orders
@@ -77,10 +109,10 @@ DELETE FROM `products_orders` WHERE product_id=:productIdInput AND order_id=:ord
 -- Branches page
 
 SELECT branches.id, branches.name, COALESCE(SUM(orders.total_price), 0) AS tot_sales, COUNT(products.id) AS tot_products, COUNT(orders.id) AS tot_orders, COUNT(customers.id) AS tot_customers
-    FROM branches 
+    FROM branches
     LEFT JOIN orders
     ON orders.branch_id = branches.id
-    
+
     LEFT JOIN branch_customer
     ON branches.id = branch_customer.branch_id
     LEFT JOIN customers
@@ -91,10 +123,10 @@ SELECT branches.id, branches.name, COALESCE(SUM(orders.total_price), 0) AS tot_s
 
 -- Sort by total sales
 SELECT branches.id, branches.name, COALESCE(SUM(orders.total_price), 0) AS tot_sales, COUNT(products.id) AS tot_products, COUNT(orders.id) AS tot_orders, COUNT(customers.id) AS tot_customers
-    FROM branches 
+    FROM branches
     LEFT JOIN orders
     ON orders.branch_id = branches.id
-    
+
     LEFT JOIN branch_customer
     ON branches.id = branch_customer.branch_id
     LEFT JOIN customers
@@ -105,10 +137,10 @@ SELECT branches.id, branches.name, COALESCE(SUM(orders.total_price), 0) AS tot_s
     ORDER BY tot_sales DESC
 -- Sort by location
 SELECT branches.id, branches.name, COALESCE(SUM(orders.total_price), 0) AS tot_sales, COUNT(products.id) AS tot_products, COUNT(orders.id) AS tot_orders, COUNT(customers.id) AS tot_customers
-    FROM branches 
+    FROM branches
     LEFT JOIN orders
     ON orders.branch_id = branches.id
-    
+
     LEFT JOIN branch_customer
     ON branches.id = branch_customer.branch_id
     LEFT JOIN customers
@@ -135,7 +167,7 @@ SELECT customers.id, customers.name, customers.email, customers.city, customers.
 
 
 -- Sort by state
-SELECT id, name, email, address, city, state, zip_code, age 
+SELECT id, name, email, address, city, state, zip_code, age
         FROM customers
         ORDER BY state ASC
 
@@ -154,7 +186,7 @@ DELETE FROM customers WHERE id=:idInput;
 -- branch_customer
 SELECT * FROM branch_customer;
 
--- 
+--
 INSERT INTO `branch_customer` (`branch_id`, `customer_id`) VALUES
 (:branchIdInput, :customerIdInput);
 
