@@ -116,7 +116,7 @@ module.exports = (function () {
     var callbackCount = 0;
     var context = {};
     var mysql = req.app.get("mysql");
-
+    console.log("THis is the dbPass:", process.env.dbPass)
     getBranches(res, mysql, context, complete);
 
     function complete() {
