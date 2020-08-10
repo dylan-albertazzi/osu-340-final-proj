@@ -18,6 +18,8 @@ console.log("my sql set");
 app.use(express.static(__dirname + "/static"));
 app.use("/branches", require("./branches.js"));
 app.use("/customers", require("./customers.js"));
+app.use("/orders", require("./orders.js"));
+app.use("/products", require("./products.js"));
 // for parsing application/json
 app.use(bodyParser.json());
 // for parsing application/xwww-

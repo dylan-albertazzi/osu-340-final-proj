@@ -1,0 +1,14 @@
+<html>
+<h1>Update {{order.name}}:</h1>
+<form id="update-orders" action="" method="post">
+    Order purchase_date: <input type="text" name="purchase_date" value="{{order.purchase_date}}"><br>
+    {{!-- <input type="submit" value="Update"/> --}}
+
+
+</form>
+<button onclick="updateOrder({{order.id}})">Update</button>
+{{!-- <script defer>selectPlanet({{ person.homeworld }});</script> --}}
+<script type="text/javascript" src="/updateorder.js" defer></script>
+
+
+</html>

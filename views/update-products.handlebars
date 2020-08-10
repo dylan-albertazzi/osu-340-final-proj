@@ -1,0 +1,14 @@
+<html>
+<h1>Update {{product.name}}:</h1>
+<form id="update-products" action="" method="post">
+    Product name: <input type="text" name="name" value="{{product.name}}"><br>
+    {{!-- <input type="submit" value="Update"/> --}}
+
+
+</form>
+<button onclick="updateProduct({{product.id}})">Update</button>
+{{!-- <script defer>selectPlanet({{ person.homeworld }});</script> --}}
+<script type="text/javascript" src="/updateproduct.js" defer></script>
+
+
+</html>
