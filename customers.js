@@ -159,10 +159,11 @@ module.exports = (function () {
     console.log("in post:", req.body);
     var mysql = req.app.get("mysql");
     var sql =
-      "INSERT INTO customers (name, email, city, state, zip_code, age) VALUES (?,?,?,?,?,?)";
+      "INSERT INTO customers (name, email, address, city, state, zip_code, age) VALUES (?,?,?,?,?,?,?)";
     var inserts = [
       req.body.customerName,
       req.body.customerEmail,
+      req.body.customerAddress,
       req.body.customerCity,
       req.body.customerState,
       req.body.customerZip,

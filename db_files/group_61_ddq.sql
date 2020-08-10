@@ -20,7 +20,7 @@ CREATE TABLE products (
 CREATE TABLE branches (
   id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   name VARCHAR(256) NOT NULL,
-  total_sales INT(10) NOT NULL
+  total_sales INT(10)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE product_order (
@@ -33,8 +33,8 @@ CREATE TABLE orders (
   id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   customer_id INT NOT NULL,
   branch_id INT NOT NULL,
-  total_price DECIMAL(10) not NULL UNSIGNED,
-  purchase_date DATE not NULL
+  total_price DECIMAL(10) UNSIGNED NOT NULL,
+  purchase_date DATE NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE branch_customer (

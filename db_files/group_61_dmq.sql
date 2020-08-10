@@ -175,7 +175,7 @@ SELECT id, name, email, address, city, state, zip_code, age
 UPDATE customers SET name=?, email=?, address=?, city=?, state=?, zip_code=?, age=? WHERE id=?
 
 -- Insert new customer
-INSERT INTO customers (name, email, city, state, zip_code, age) VALUES (?,?,?,?,?,?)
+INSERT INTO customers (name, email, city, address, state, zip_code, age) VALUES (?,?,?,?,?,?)
 
 -- Deleting a customer
 DELETE FROM customers WHERE id=:idInput;

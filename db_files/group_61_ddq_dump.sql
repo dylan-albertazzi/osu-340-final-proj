@@ -56,7 +56,7 @@ DROP TABLE IF EXISTS `branches`;
 CREATE TABLE branches (
   id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
   name VARCHAR(256) NOT NULL,
-  total_sales INT(10) NOT NULL
+  total_sales INT(10)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
