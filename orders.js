@@ -13,18 +13,7 @@ module.exports = (function () {
 
   function getOrders(res, mysql, context, complete) {
     mysql.pool.query(
-      `SELECT orders.id, orders.purchase_date, COALESCE(SUM(products.price), 0) AS total_price, customers.name AS customer, branch.location AS branch
-            FROM orders
-            LEFT JOIN customers
-            ON orders.customer_id = customers.id
-
-            LEFT JOIN branches
-            ON orders.branch_id = branches.id
-
-            LEFT JOIN product_order
-            ON orders.id = product_order.order_id
-
-            GROUP BY orders.id`,
+      `SELECT orders.id, orders.purchase_date, COALESCE(SUM(products.price), 0) AS total_price, customers.name AS customer, branches.name AS branch FROM orders LEFT JOIN customers ON orders.customer_id = customers.id LEFT JOIN branches ON orders.branch_id = branches.id LEFT JOIN product_order ON orders.id = product_order.order_id LEFT JOIN products ON products.id = product_order.product_id GROUP BY orders.id`,
       function (error, results, fields) {
         if (error) {
           res.write(JSON.stringify(error));

@@ -8,4 +8,4 @@ var pool = mysql.createPool({
   password        : process.env.dbPass,
   database        : 'cs340-final-proj'
 });
-module.exports.pool = pool;
+module.exports.pool = pool;  
