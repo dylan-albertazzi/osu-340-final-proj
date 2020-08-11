@@ -5,7 +5,7 @@
 -------------------------------------------------------------------------------
 -- orders page
 
-SELECT orders.id, orders.purchase_date, COALESCE(SUM(products.price), 0) AS total_price, customers.name AS customer, branch.location AS branch
+SELECT orders.id, orders.purchase_date, orders.total_price, customers.name AS customer, branches.name AS branch
             FROM orders
             LEFT JOIN customers
             ON orders.customer_id = customers.id
@@ -15,32 +15,47 @@ SELECT orders.id, orders.purchase_date, COALESCE(SUM(products.price), 0) AS tota
 
             LEFT JOIN product_order
             ON orders.id = product_order.order_id
+            
+            LEFT JOIN products
+            ON product_order.product_id = products.id
 
-            GROUP BY orders.id;
+            GROUP BY orders.id
 
 
-SELECT orders.id, orders.purchase_date, COALESCE(SUM(products.price), 0) AS total_price, customers.name AS customer, branch.location AS branch
+SELECT orders.id, orders.purchase_date, orders.total_price, customers.name AS customer, branches.name AS branch
             FROM orders
             LEFT JOIN customers
             ON orders.customer_id = customers.id
+
             LEFT JOIN branches
             ON orders.branch_id = branches.id
+
             LEFT JOIN product_order
             ON orders.id = product_order.order_id
+            
+            LEFT JOIN products
+            ON product_order.product_id = products.id
+
             GROUP BY orders.id
             ORDER BY total_price DESC;
 
 
-SELECT orders.id, orders.purchase_date, COALESCE(SUM(products.price), 0) AS total_price, customers.name AS customer, branch.location AS branch
+SELECT orders.id, orders.purchase_date, orders.total_price, customers.name AS customer, branches.name AS branch
             FROM orders
             LEFT JOIN customers
             ON orders.customer_id = customers.id
+
             LEFT JOIN branches
             ON orders.branch_id = branches.id
+
             LEFT JOIN product_order
             ON orders.id = product_order.order_id
+            
+            LEFT JOIN products
+            ON product_order.product_id = products.id
+
             GROUP BY orders.id
-            ORDER BY branch ASC;
+            ORDER BY branch ASC
 
 INSERT INTO orders (`customer_id`, `branch_id`, `total_price`, `purchase_date`) VALUES
  (:customerIdInput, :branchIdInput, :priceInput, :dateInput);
@@ -56,20 +71,22 @@ WHERE id=:idInput;
 -------------------------------------------------------------------------------
 -- products page
 
-SELECT products.id, products.name, branch.location AS branch, products.price
+SELECT products.id, products.name, branches.name AS branch, products.price
             FROM products
             LEFT JOIN branches
             ON products.branch_id = branches.id
             GROUP BY products.id;
 
-SELECT products.id, products.name, branch.location AS branch, products.price
+
+SELECT products.id, products.name, branches.name AS branch, products.price
             FROM products
             LEFT JOIN branches
             ON products.branch_id = branches.id
             GROUP BY products.id
             ORDER BY price DESC;
 
-SELECT products.id, products.name, branch.location AS branch, products.price
+
+SELECT products.id, products.name, branches.name AS branch, products.price
             FROM products
             LEFT JOIN branches
             ON products.branch_id = branches.id

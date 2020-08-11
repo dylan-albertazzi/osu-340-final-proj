@@ -103,26 +103,25 @@ ALTER TABLE branch_customer
 -------------------------------------------------------------------------------
 -- ***** Initial Data *****
 
-INSERT INTO `products` (branch_id, `name`, `price`) VALUES
-(1, "Speedy Boat", 58671),
-(2, "Super Boat", 92103),
-(3, "Luxury Boat", 182449);
-
 INSERT INTO `branches` (`name`, `total_sales`) VALUES
 ("Portland, OR", 1234334),
 ("Los Angeles, CA", 3243244),
 ("Miami, FL", "DC-15A", 5435654);
 
-INSERT INTO `orders` (`customer_id`, `branch_id`, `total_price`, `purchase_date`) VALUES
-(1, 1, 92103, '02/05/2020'),
-(2, 2, 183000, '05/22/2020'),
-(3, 3, 95000, '04/17/2020');
+INSERT INTO `products` (branch_id, `name`, `price`) VALUES
+(1, "Speedy Boat", 58671),
+(2, "Super Boat", 92103),
+(3, "Luxury Boat", 182449);
 
 INSERT INTO `customers` (`name`, `email`, `address`, `city`, `state`, `zip_code`, `age`) VALUES
 ("Tyler Smith", "tyler@gmail.com", "3230 Pine Dr.", "Corvallis", "OR", 97330, 38),
 ("John Hunt", "jh@gmail.com", "13 Lucky Ln.", "Los Angeles", "CA", 90001, 61),
 ("Stacy Johnson", "stacyj@gmail.com", "4342 15th St.", "Miami", "FL", 33101, 49);
 
+INSERT INTO `orders` (`customer_id`, `branch_id`, `total_price`, `purchase_date`) VALUES
+(1, 1, 92103, '02/05/2020'),
+(2, 2, 183000, '05/22/2020'),
+(3, 3, 95000, '04/17/2020');
 
 
 INSERT INTO `product_order` (`product_id`, `order_id`) VALUES
