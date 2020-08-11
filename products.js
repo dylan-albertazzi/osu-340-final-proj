@@ -13,7 +13,7 @@ module.exports = (function () {
 
   function getProducts(res, mysql, context, complete) {
     mysql.pool.query(
-      `SELECT products.id, products.name, branch.location AS branch, products.price
+      `SELECT products.id, products.name, branches.name AS branch, products.price
             FROM products
             LEFT JOIN branches
             ON products.branch_id = branches.id
@@ -34,7 +34,7 @@ module.exports = (function () {
 
   function getProductsByPrice(res, mysql, context, complete) {
     mysql.pool.query(
-      `SELECT products.id, products.name, branch.location AS branch, products.price
+      `SELECT products.id, products.name, branches.name AS branch, products.price
             FROM products
             LEFT JOIN branches
             ON products.branch_id = branches.id
@@ -56,7 +56,7 @@ module.exports = (function () {
 
   function getProductsByBranch(res, mysql, context, complete) {
     mysql.pool.query(
-      `SELECT products.id, products.name, branch.location AS branch, products.price
+      `SELECT products.id, products.name, branches.name AS branch, products.price
             FROM products
             LEFT JOIN branches
             ON products.branch_id = branches.id
