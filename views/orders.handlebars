@@ -8,8 +8,8 @@
 
   <div class="row">
     <div class="col text-right pb-3">
-      <a class="btn btn-outline-dark" href="#" role="button">Sort by Date</a>
-      <a class="btn btn-outline-dark ml-2" href="#" role="button">Filter by Price</a>
+      <a class="btn btn-outline-dark" href="/orders/byDate" role="button">Sort by Date</a>
+      <a class="btn btn-outline-dark ml-2" href="/orders/byPrice" role="button">Filter by Price</a>
       <a class="btn btn-primary ml-5" href="#" data-toggle="modal" data-target="#exampleModalCenter" role="button">+
         New</a>
     </div>
@@ -27,30 +27,23 @@
         <tr>
           <th>Purchase Date</th>
           <th>Total Price</th>
-         
           <th>Customer</th>
           <th>Branch</th>
           <th>Edit</th>
           <th>Del.</th>
         </tr>
+
+        {{#each orders}}
         <tr>
-          <td>2020-07-20</td>
-          <td>$ 100,000</td>
-          
-          <td>Spongebob</td>
-          <td>Portland, OR</td>
-          <td class="text-center">✏️</td>
-          <td class="text-center">🗑</td>
+          <td>{{purchase_date}}</td>
+          <td>{{total_price}}</td>
+          <td>{{customer}}</td>
+          <td>{{branch}}</td>
+          <td class="text-center"><a href="/orders/{{id}}">✏️</a></td>
+          <td class="text-center"><button class="bg-transparent border-0" onclick="deleteOrder({{id}})">🗑</button></td>
+
         </tr>
-        <tr>
-          <td>2020-01-01</td>
-          <td>$ 2,000,000</td>
-         
-          <td>Barack Obama</td>
-          <td>SanFrancisco, CA</td>
-          <td class="text-center">✏️</td>
-          <td class="text-center">🗑</td>
-        </tr>
+        {{/each}}
       </table>
     </div>
   </div>
@@ -68,41 +61,40 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form>
+      <form id="addorder" method="post">
         <div class="modal-body">
 
           <div class="form-group">
-            <label for="purchaseDate">Date</label>
-            <input type="date" class="form-control" id="purchaseDate" aria-describedby="purchaseDate"
+            <label for="orderDate">Purchase Date</label>
+            <input type="date" name="orderDate" class="form-control" id="orderDate" aria-describedby="orderDate"
               placeholder="Enter date">
-            {{!-- <small id="dateHelp" class="form-text text-muted">Ex. "2020-07-20" (YYYY-MM-DD)</small> --}}
+            <!--<small id="dateHelp" class="form-text text-muted">Ex. "2020-07-20" (YYYY-MM-DD)</small>-->
           </div>
 
           <div class="form-group">
-            <label for="productBranch">Branch</label>
-            <br />
-            <select id="productBranch" name="productBranch">
-              <option value="volvo">Insert</option>
-              <option value="saab">Dynamic</option>
-              <option value="fiat">Functionality with JS</option>
-            </select>
-            <small id="selectProductHelp" class="form-text text-muted">Branch the order is placed at.</small>
+            <label for="orderPrice">Price</label>
+            <input type="number" name="orderPrice" class="form-control" id="orderPrice" aria-describedby="orderPrice"
+              placeholder="Enter price">
+            <!--<small id="dateHelp" class="form-text text-muted">Ex. "2020-07-20" (YYYY-MM-DD)</small>-->
           </div>
-
-        
 
           <div class="form-group">
-            <label for="customer">Customer</label>
-            <br />
-            <select id="customer" name="customer">
-              <option value="volvo">Insert</option>
-              <option value="saab">Dynamic</option>
-              <option value="fiat">Functionality with JS</option>
+            <label for="orderCustomer">Customer</label>
+            <select id="orderCustomer" name="orderCustomer">
+              {{#each customers}}
+              <option value="{{id}}">{{name}}</option>
+              {{/each}}
             </select>
-
           </div>
 
-
+          <div class="form-group">
+            <label for="orderBranch">Branch</label>
+            <select id="orderBranch" name="orderBranch">
+              {{#each branches}}
+              <option value="{{id}}">{{name}}</option>
+              {{/each}}
+            </select>
+          </div>
 
         </div>
         <div class="modal-footer">
@@ -113,3 +105,5 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript" src="/deleteorder.js" defer></script>

@@ -42,6 +42,36 @@ module.exports = (function () {
     console.log("=Context in func:", context);
   }
 
+  function getBranches(res, mysql, context, complete) {
+    mysql.pool.query(`SELECT branches.id, branches.name FROM branches`, function (error, results, fields) {
+        if (error) {
+          res.write(JSON.stringify(error));
+          res.end();
+        }
+
+        context.branches = results;
+
+        complete();
+      }
+    );
+    console.log("=Context in func:", context);
+  }
+
+  function getCustomers(res, mysql, context, complete) {
+    mysql.pool.query(`SELECT customers.id, customers.name FROM customers`, function (error, results, fields) {
+        if (error) {
+          res.write(JSON.stringify(error));
+          res.end();
+        }
+
+        context.customers = results;
+
+        complete();
+      }
+    );
+    console.log("=Context in func:", context);
+  }
+
   function getOrdersByPrice(res, mysql, context, complete) {
     mysql.pool.query(
       `SELECT orders.id, orders.purchase_date, orders.total_price, customers.name AS customer, branches.name AS branch
@@ -76,7 +106,7 @@ module.exports = (function () {
 
   function getOrdersByDate(res, mysql, context, complete) {
     mysql.pool.query(
-      `SELECT orders.id, orders.purchase_date, COALESCE(SUM(products.price), 0) AS total_price, customers.name AS customer, branch.location AS branch
+      `SELECT orders.id, orders.purchase_date, orders.total_price, customers.name AS customer, branches.name AS branch
             FROM orders
             LEFT JOIN customers
             ON orders.customer_id = customers.id
@@ -86,6 +116,9 @@ module.exports = (function () {
 
             LEFT JOIN product_order
             ON orders.id = product_order.order_id
+
+            LEFT JOIN products
+            ON product_order.product_id = products.id
 
             GROUP BY orders.id
             ORDER BY purchase_date ASC`,
@@ -124,10 +157,12 @@ module.exports = (function () {
     var mysql = req.app.get("mysql");
 
     getOrders(res, mysql, context, complete);
+    getBranches(res, mysql, context, complete);
+    getCustomers(res, mysql, context, complete);
 
     function complete() {
       callbackCount++;
-      if (callbackCount >= 1) {
+      if (callbackCount >= 3) {
         console.log("res.render context:", context);
         res.render("orders", context);
       }
@@ -136,16 +171,18 @@ module.exports = (function () {
 
   /*Display Orders by total price*/
 
-  router.get("/byTotalPrice", function (req, res) {
+  router.get("/byPrice", function (req, res) {
     var callbackCount = 0;
     var context = {};
     var mysql = req.app.get("mysql");
 
     getOrdersByPrice(res, mysql, context, complete);
+    getBranches(res, mysql, context, complete);
+    getCustomers(res, mysql, context, complete);
 
     function complete() {
       callbackCount++;
-      if (callbackCount >= 1) {
+      if (callbackCount >= 3) {
         console.log("res.render context:", context);
         res.render("orders", context);
       }
@@ -160,10 +197,12 @@ module.exports = (function () {
     var mysql = req.app.get("mysql");
 
     getOrdersByDate(res, mysql, context, complete);
+    getBranches(res, mysql, context, complete);
+    getCustomers(res, mysql, context, complete);
 
     function complete() {
       callbackCount++;
-      if (callbackCount >= 1) {
+      if (callbackCount >= 3) {
         console.log("res.render context:", context);
         res.render("orders", context);
       }
@@ -179,12 +218,14 @@ module.exports = (function () {
     var mysql = req.app.get("mysql");
 
     getOrder(res, mysql, context, req.params.id, complete);
+    getBranches(res, mysql, context, complete);
+    getCustomers(res, mysql, context, complete);
 
     function complete() {
       callbackCount++;
-      if (callbackCount >= 1) {
+      if (callbackCount >= 3) {
         console.log("context:", context);
-        res.render("update-order", context);
+        res.render("update-orders", context);
       }
     }
   });
@@ -194,8 +235,13 @@ module.exports = (function () {
   router.post("/", function (req, res) {
     console.log(req.body.orderDate);
     var mysql = req.app.get("mysql");
-    var sql = "INSERT INTO orders (purchase_date) VALUES (?)";
-    var inserts = [req.body.orderDate];
+    var sql = "INSERT INTO orders (purchase_date, total_price, customer_id, branch_id) VALUES (?, ?, ?, ?)";
+    var inserts = [
+      req.body.orderDate,
+      req.body.orderPrice,
+      req.body.orderCustomer,
+      req.body.orderBranch
+    ];
 
     sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
       if (error) {
@@ -213,7 +259,7 @@ module.exports = (function () {
   router.put("/:id", function (req, res) {
     var mysql = req.app.get("mysql");
     console.log("in form put yay. Context:", req.body);
-    var sql = "UPDATE orders SET purchase_date=? WHERE id=?";
+    var sql = "UPDATE orders SET purchase_date=?, total_price=?, customer_id=?, branch_id=? WHERE id=?";
     var inserts = [req.body.name, req.params.id];
 
     sql = mysql.pool.query(sql, inserts, function (error, results, fields) {

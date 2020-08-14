@@ -32,6 +32,21 @@ module.exports = (function () {
     console.log("=Context in func:", context);
   }
 
+  function getBranches(res, mysql, context, complete) {
+    mysql.pool.query(`SELECT branches.id, branches.name FROM branches`, function (error, results, fields) {
+        if (error) {
+          res.write(JSON.stringify(error));
+          res.end();
+        }
+
+        context.branches = results;
+
+        complete();
+      }
+    );
+    console.log("=Context in func:", context);
+  }
+
   function getProductsByPrice(res, mysql, context, complete) {
     mysql.pool.query(
       `SELECT products.id, products.name, branches.name AS branch, products.price
@@ -97,10 +112,11 @@ module.exports = (function () {
     var mysql = req.app.get("mysql");
 
     getProducts(res, mysql, context, complete);
+    getBranches(res, mysql, context, complete);
 
     function complete() {
       callbackCount++;
-      if (callbackCount >= 1) {
+      if (callbackCount >= 2) {
         console.log("res.render context:", context);
         res.render("products", context);
       }
@@ -115,17 +131,18 @@ module.exports = (function () {
     var mysql = req.app.get("mysql");
 
     getProductsByPrice(res, mysql, context, complete);
+    getBranches(res, mysql, context, complete);
 
     function complete() {
       callbackCount++;
-      if (callbackCount >= 1) {
+      if (callbackCount >= 2) {
         console.log("res.render context:", context);
         res.render("products", context);
       }
     }
   });
 
-  /*Display Orders by purchase date*/
+  /*Display Products by branch*/
 
   router.get("/byBranch", function (req, res) {
     var callbackCount = 0;
@@ -133,10 +150,11 @@ module.exports = (function () {
     var mysql = req.app.get("mysql");
 
     getProductsByBranch(res, mysql, context, complete);
+    getBranches(res, mysql, context, complete);
 
     function complete() {
       callbackCount++;
-      if (callbackCount >= 1) {
+      if (callbackCount >= 2) {
         console.log("res.render context:", context);
         res.render("products", context);
       }
@@ -148,29 +166,31 @@ module.exports = (function () {
   router.get("/:id", function (req, res) {
     callbackCount = 0;
     var context = {};
-    context.jsscripts = ["updateorder.js"];
+    context.jsscripts = ["updateproduct.js"];
     var mysql = req.app.get("mysql");
 
     getProduct(res, mysql, context, req.params.id, complete);
+    getBranches(res, mysql, context, complete);
 
     function complete() {
       callbackCount++;
-      if (callbackCount >= 1) {
+      if (callbackCount >= 2) {
         console.log("context:", context);
-        res.render("update-product", context);
+        res.render("update-products", context);
       }
     }
   });
 
-  /* Adds a order, redirects to the orders page after adding */
+  /* Adds a product, redirects to the products page after adding */
 
   router.post("/", function (req, res) {
     console.log(req.body.productName);
     var mysql = req.app.get("mysql");
-    var sql = "INSERT INTO products (name, price) VALUES (?, ?)";
+    var sql = "INSERT INTO products (name, price, branch_id) VALUES (?, ?, ?)";
     var inserts = [
       req.body.productName,
       req.body.productPrice,
+      req.body.productBranch
     ];
 
     sql = mysql.pool.query(sql, inserts, function (error, results, fields) {
@@ -184,12 +204,12 @@ module.exports = (function () {
     });
   });
 
-  /* The URI that update data is sent to in order to update a order */
+  /* The URI that update data is sent to in order to update a product */
 
   router.put("/:id", function (req, res) {
     var mysql = req.app.get("mysql");
     console.log("in form put yay. Context:", req.body);
-    var sql = "UPDATE products SET name=?, price=? WHERE id=?";
+    var sql = "UPDATE products SET name=?, branch_id=?, price=? WHERE id=?";
     var inserts = [
       req.name,
       req.body.price,

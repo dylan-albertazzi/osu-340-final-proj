@@ -8,8 +8,8 @@
 
   <div class="row">
     <div class="col text-right pb-3">
-      <a class="btn btn-outline-dark" href="#" role="button">Sort by Branch</a>
-      <a class="btn btn-outline-dark ml-2" href="#" role="button">Sort by Price</a>
+      <a class="btn btn-outline-dark" href="/products/byBranch" role="button">Sort by Branch</a>
+      <a class="btn btn-outline-dark ml-2" href="/products/byPrice" role="button">Sort by Price</a>
       <a class="btn btn-primary ml-5" href="#" data-toggle="modal" data-target="#exampleModalCenter" role="button">+
         New</a>
     </div>
@@ -30,27 +30,17 @@
           <th>Edit</th>
           <th>Del.</th>
         </tr>
+
+        {{#each products}}
         <tr>
-          <td>Speedy Boat</td>
-          <td>Portland, OR</td>
-          <td>$ 58,671</td>
-          <td class="text-center">✏️</td>
-          <td class="text-center">🗑</td>
+          <td>{{name}}</td>
+          <td>{{branch}}</td>
+          <td>{{price}}</td>
+          <td class="text-center"><a href="/products/{{id}}">✏️</a></td>
+          <td class="text-center"><button class="bg-transparent border-0" onclick="deleteProduct({{id}})">🗑</button></td>
+
         </tr>
-        <tr>
-          <td>Super Boat</td>
-          <td>Portland, OR</td>
-          <td>$ 92,103</td>
-          <td class="text-center">✏️</td>
-          <td class="text-center">🗑</td>
-        </tr>
-        <tr>
-          <td>Luxury Boat</td>
-          <td>SanFrancisco, CA</td>
-          <td>$ 182,449</td>
-          <td class="text-center">✏️</td>
-          <td class="text-center">🗑</td>
-        </tr>
+        {{/each}}
       </table>
     </div>
   </div>
@@ -68,35 +58,32 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form>
+      <form id="addproduct" method="post">
         <div class="modal-body">
 
           <div class="form-group">
             <label for="productName">Name</label>
-            <input type="text" class="form-control" id="productName" aria-describedby="nameHelp"
-              placeholder="Enter product name">
+            <input type="text" name="productName" class="form-control" id="productName"
+              aria-describedby="nameHelp" placeholder="Enter product name">
             <small id="emailHelp" class="form-text text-muted">Ex. "Big Boat" or "Fun Boat"</small>
           </div>
 
 
           <div class="form-group">
             <label for="productPrice">Price</label>
-            <input type="number" class="form-control" id="productPrice" aria-describedby="priceHelp"
-              placeholder="Enter product price">
+            <input type="number" name="productPrice" class="form-control" id="productPrice"
+              aria-describedby="priceHelp" placeholder="Enter product price">
             <small id="priceHelp" class="form-text text-muted">Ex. 45,000</small>
           </div>
 
 
           <div class="form-group">
             <label for="productBranch">Branch</label>
-            <br />
-            <select id="productBranch" name="productBranch" multiple>
-              <option value="volvo">Insert</option>
-              <option value="saab">Dynamic</option>
-              <option value="fiat">Functionality with JS</option>
+            <select id="productBranch" name="productBranch">
+              {{#each branches}}
+              <option value="{{id}}">{{name}}</option>
+              {{/each}}
             </select>
-            <small id="selectProductHelp" class="form-text text-muted">Hold down the Ctrl (windows) / Command (Mac)
-              button to select multiple options.</small>
           </div>
 
         </div>
@@ -108,3 +95,5 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript" src="/deleteproduct.js" defer></script>
